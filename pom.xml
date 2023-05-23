@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.0.0</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>src/Gateway</module>
+        <module>src/LibraryService</module>
+        <module>src/RatingService</module>
+        <module>src/ReservationService</module>
+        <module>src/request1</module>
+    </modules>
+
+<!--    <groupId>com.example</groupId>-->
+<!--    <artifactId>rsoi-2022-lab2-microservices-KryukovSA</artifactId>-->
+<!--    <version>0.0.1-SNAPSHOT</version>-->
+<!--    <name>rsoi-2022-lab2-microservices-KryukovSA</name>-->
+<!--    <description>rsoi-2022-lab2-microservices-KryukovSA</description>-->
+    <groupId>com.example</groupId>
+    <artifactId>rsoi-project</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>rsoi-project</name>
+    <description>rsoi-project</description>
+
+    <properties>
+        <java.version>19</java.version>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>
