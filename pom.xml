@@ -18,6 +18,7 @@
         <module>src/RatingService</module>
         <module>src/ReservationService</module>
         <module>src/request1</module>
+        <module>src/IdentityProvider</module>
     </modules>
 
 <!--    <groupId>com.example</groupId>-->
