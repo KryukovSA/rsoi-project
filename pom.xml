@@ -19,6 +19,7 @@
         <module>src/ReservationService</module>
         <module>src/request1</module>
         <module>src/IdentityProvider</module>
+        <module>src/StatisticService</module>
     </modules>
 
 <!--    <groupId>com.example</groupId>-->

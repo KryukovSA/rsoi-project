@@ -70,9 +70,9 @@ insert into rating (id, username, stars)
 values (1, 'Test Max', 75)
 
 
-insert into my_user(email, password, role)
-values('user@gmail.com', 'password', 'USER');
+insert into my_user(username, email, password, role)
+values('username1', 'user@gmail.com', 'password', 'USER');
 
 
-insert into my_user( email, password, role)
-values('admin@gmail.com', 'password', 'ADMIN');
+insert into my_user( username, email, password, role)
+values('username2','admin@gmail.com', 'password', 'ADMIN');
