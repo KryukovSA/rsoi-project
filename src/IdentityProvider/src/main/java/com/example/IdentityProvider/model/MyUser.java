@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.Id;
@@ -18,7 +19,7 @@ import org.springframework.data.annotation.Id;
 public class MyUser {
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long  id;
 
     @NotNull
     @Column(unique = true)
@@ -29,6 +30,7 @@ public class MyUser {
 
     @NotNull
     @Column(unique = true)
+    @Email
     private String email;
     @NotNull
     private String role;

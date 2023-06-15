@@ -71,8 +71,8 @@ values (1, 'Test Max', 75)
 
 
 insert into my_user(username, email, password, role)
-values('username1', 'user@gmail.com', 'password', 'USER');
+values('username1', 'user@gmail.com', 'password', 'ROLE_USER');
 
 
 insert into my_user( username, email, password, role)
-values('username2','admin@gmail.com', 'password', 'ADMIN');
+values('username2','admin@gmail.com', 'password', 'ROLE_ADMIN');
