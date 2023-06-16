@@ -1,5 +1,6 @@
 package com.example.IdentityProvider.controller;
 
+import com.example.IdentityProvider.CurrentUserToken;
 import com.example.IdentityProvider.controller.dto.AuthResponse;
 import com.example.IdentityProvider.controller.dto.LoginRequest;
 import com.example.IdentityProvider.controller.dto.SignUpRequest;
@@ -30,6 +31,7 @@ public class IPcontroller {
     @PostMapping("/auth/authenticate")
     public AuthResponse login(@Valid @RequestBody LoginRequest loginRequest) {
         String token = authenticateAndGetToken(loginRequest.getUsername(), loginRequest.getPassword());
+        CurrentUserToken.token = token;
         return new AuthResponse(token);
     }
 
@@ -46,6 +48,7 @@ public class IPcontroller {
         userService.saveUser(mapSignUpRequestToUser(signUpRequest));
 
         String token = authenticateAndGetToken(signUpRequest.getUsername(), signUpRequest.getPassword());
+        CurrentUserToken.token = token;
         return new AuthResponse(token);
     }
 

@@ -1,11 +1,15 @@
 package com.example.gateway.controller;
 
+import com.example.IdentityProvider.CurrentUserToken;
+import com.example.IdentityProvider.security.TokenProvider;
 import com.example.request1.requests.UnavalableAnswer;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -21,6 +25,7 @@ public class RatingGatewayController {
     private static Integer maxCountErr = 8;
     private final TaskScheduler scheduler;
     private Integer countErr = 0;
+
     private final Runnable healthCheck =
             new Runnable() {
                 @Override
@@ -38,7 +43,12 @@ public class RatingGatewayController {
     public static final String ratingUrl = "http://localhost:8050/api/v1/rating";
 
     @GetMapping
-    public ResponseEntity<?> getUserRating(@RequestHeader("X-User-Name") String username) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getUserRating() {//@RequestHeader("X-User-Name") String username
+        String username = Jwts.parser()
+                .setSigningKey("v9y$B&E)H@MbQeThWmZq4t7w!z%C*F-JaNdRfUjXn2r5u8x/A?D(G+KbPeShVkYp")
+                .parseClaimsJws(CurrentUserToken.token)
+                .getBody().getSubject();
         RestTemplate restTemplate = new RestTemplate();
         String url = ratingUrl + "?username=" + username;
         HashMap<String, Integer> raiting = new HashMap<>();
@@ -60,6 +70,7 @@ public class RatingGatewayController {
     }
 
     @PostMapping("/decrease")
+    //@PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> decreaseUserRating(@RequestParam("username") String username,
                                                 @RequestParam("expired") Boolean expired,
                                                 @RequestParam("badCondition") Boolean badCondition) {
@@ -70,6 +81,7 @@ public class RatingGatewayController {
     }
 
     @PostMapping("/increase")
+    //@PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> increaseUserRating(@RequestParam("username") String username) {
         RestTemplate restTemplate = new RestTemplate();
         String url = ratingUrl + "/increase" + "?username=" + username;

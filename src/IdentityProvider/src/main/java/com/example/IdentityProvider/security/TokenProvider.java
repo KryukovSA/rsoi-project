@@ -77,6 +77,9 @@ public class TokenProvider {
         return Optional.empty();
     }
 
+    public String extractUsername(String token) {
+        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+    }
     public static final String TOKEN_TYPE = "JWT";
     public static final String TOKEN_ISSUER = "lib-api";
     public static final String TOKEN_AUDIENCE = "lib-app";
