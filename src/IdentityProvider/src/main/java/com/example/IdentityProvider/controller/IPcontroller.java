@@ -63,6 +63,21 @@ public class IPcontroller {
         return user;
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/createUser")
+    public String createUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+        if (userService.hasUserWithUsername(signUpRequest.getUsername())) {
+            throw new DuplicatedUserInfoException(String.format("Username %s already been used", signUpRequest.getUsername()));
+        }
+        if (userService.hasUserWithEmail(signUpRequest.getEmail())) {
+            throw new DuplicatedUserInfoException(String.format("Email %s already been used", signUpRequest.getEmail()));
+        }
+
+        userService.saveUser(mapSignUpRequestToUser(signUpRequest));
+
+        String token = authenticateAndGetToken(signUpRequest.getUsername(), signUpRequest.getPassword());
+        return "user successfully created";
+    }
 
 
 

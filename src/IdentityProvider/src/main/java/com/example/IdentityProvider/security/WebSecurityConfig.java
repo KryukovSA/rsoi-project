@@ -37,6 +37,7 @@ public class WebSecurityConfig {
         return http
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers(HttpMethod.GET, "/api/v1/statistics/getstats").hasAnyAuthority(ADMIN)
+                        .requestMatchers("/api/v1/createUser").hasAnyAuthority(ADMIN)
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/public/**").permitAll()
