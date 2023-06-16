@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1")
 @AllArgsConstructor
 public class IPcontroller {
 
@@ -27,14 +27,14 @@ public class IPcontroller {
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
 
-    @PostMapping("/authenticate")
+    @PostMapping("/auth/authenticate")
     public AuthResponse login(@Valid @RequestBody LoginRequest loginRequest) {
         String token = authenticateAndGetToken(loginRequest.getUsername(), loginRequest.getPassword());
         return new AuthResponse(token);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/signup")
+    @PostMapping("/auth/signup")
     public AuthResponse signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
         if (userService.hasUserWithUsername(signUpRequest.getUsername())) {
             throw new DuplicatedUserInfoException(String.format("Username %s already been used", signUpRequest.getUsername()));

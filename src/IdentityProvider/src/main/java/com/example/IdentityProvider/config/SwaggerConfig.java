@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
-    @Value("order-api")//("${spring.application.name}")
+    @Value("lib-api")//("${spring.application.name}")
     private String applicationName;
 
     @Bean
