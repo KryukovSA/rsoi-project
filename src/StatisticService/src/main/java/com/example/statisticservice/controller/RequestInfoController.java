@@ -1,8 +1,8 @@
 package com.example.statisticservice.controller;
 
-import com.example.statisticservice.service.KafkaProducerService;
+//import org.apache.kafka.clients.consumer.KafkaConsumer;
+import com.example.statisticservice.service.KafkaConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,17 +10,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/statistics")
 public class RequestInfoController {
+    private final KafkaConsumer kafkaConsumer;
 
-    private final KafkaProducerService kafkaProducerService;
-
-    public RequestInfoController(KafkaProducerService kafkaProducerService) {
-        this.kafkaProducerService = kafkaProducerService;
+    @Autowired
+    public RequestInfoController(KafkaConsumer kafkaConsumer) {
+        this.kafkaConsumer = kafkaConsumer;
     }
 
-//    @GetMapping("/api/v1/getstats")
-//    public ResponseEntity<String> getRequestInfo() {
-//        // Get request type and execution time
-//        // Call KafkaProducerService to send the information to Kafka
-//        // Return an appropriate response
-//    }
+    @GetMapping
+    public String getStatistics() {
+        // Ваша логика для получения статистики, например, из базы данных или других источников
+        // Здесь вы можете вернуть сохраненные статистические данные в формате JSON
+        return "Your statistics";
+    }
 }
