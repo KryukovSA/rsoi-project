@@ -1,6 +1,6 @@
 package com.example.gateway.controller;
 
-import com.example.IdentityProvider.security.TokenProvider;
+//import com.example.IdentityProvider.security.TokenProvider;
 import com.example.libraryservice.model.Books;
 import com.example.request1.requests.UnavalableAnswer;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,6 @@ import org.apache.tomcat.jni.Library;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -43,7 +42,7 @@ public class LibraryGatewayController {
 
 
     @GetMapping()
-    @PreAuthorize("isAuthenticated()") //("hasRole('USER')")
+    //@PreAuthorize("isAuthenticated()") //("hasRole('USER')")
     public ResponseEntity<?> getLibsInCity(@RequestParam("city") String city) {
         String url = libraryUrl + "?city=" + city;
         RestTemplate restTemplate = new RestTemplate();
@@ -71,7 +70,7 @@ public class LibraryGatewayController {
     }
 
     @GetMapping(value = "/{libraryUid}/books")
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getLibBooks(@PathVariable("libraryUid") UUID libraryUid,
                                          @RequestParam("showAll") Boolean showAll) {
         String url = libraryUrl +'/' +libraryUid + "/books?showAll=" + showAll;

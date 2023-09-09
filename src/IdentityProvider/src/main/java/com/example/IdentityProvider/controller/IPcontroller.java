@@ -12,9 +12,11 @@ import com.example.IdentityProvider.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,9 +68,36 @@ public class IPcontroller {
         return user;
     }
 
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @PostMapping("/createUser")
+//    public String createUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+//        if (userService.hasUserWithUsername(signUpRequest.getUsername())) {
+//            throw new DuplicatedUserInfoException(String.format("Username %s already been used", signUpRequest.getUsername()));
+//        }
+//        if (userService.hasUserWithEmail(signUpRequest.getEmail())) {
+//            throw new DuplicatedUserInfoException(String.format("Email %s already been used", signUpRequest.getEmail()));
+//        }
+//
+//        userService.saveUser(mapSignUpRequestToUser(signUpRequest));
+//
+//        //String token = authenticateAndGetToken(signUpRequest.getUsername(), signUpRequest.getPassword());
+//        return "user successfully created";
+//    }
+
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/createUser")
-    public String createUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+    public String createUser(@Valid @RequestBody SignUpRequest signUpRequest, Authentication authentication) {
+        System.out.println(String.format("Это сообщение об ошибке. ваша роль: %s", authentication.getAuthorities().iterator().next().getAuthority()));
+        if (!authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))) {
+            // Если текущий пользователь не администратор, возвращаем ошибку доступа
+            String currentRole = "Unknown";
+            if (!authentication.getAuthorities().isEmpty()) {
+                currentRole = authentication.getAuthorities().iterator().next().getAuthority();
+            }
+            throw new AccessDeniedException("You do not have permission to create users. Current role: " + currentRole);
+        }
+
         if (userService.hasUserWithUsername(signUpRequest.getUsername())) {
             throw new DuplicatedUserInfoException(String.format("Username %s already been used", signUpRequest.getUsername()));
         }
@@ -77,14 +106,8 @@ public class IPcontroller {
         }
 
         userService.saveUser(mapSignUpRequestToUser(signUpRequest));
-
-        String token = authenticateAndGetToken(signUpRequest.getUsername(), signUpRequest.getPassword());
-        return "user successfully created";
+        return "User successfully created";
     }
-
-
-
-
 
 
 

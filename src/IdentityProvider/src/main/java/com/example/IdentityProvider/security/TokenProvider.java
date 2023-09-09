@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 @Component
 public class TokenProvider {
 
-    @Value("v9y$B&E)H@MbQeThWmZq4t7w!z%C*F-JaNdRfUjXn2r5u8x/A?D(G+KbPeShVkYp")//("${app.jwt.secret}")
+    @Value("v9y$B&E)H@MbQeThWmZq4t7w!z%C*F-JaNdRfUjXn2r5u8x/A?D(G+KbPeShVkYp")//${app.jwt.secret}
     private String jwtSecret;
 
-    @Value("10")
+    @Value("10")// ${app.jwt.expiration.minutes}
     private Long jwtExpirationMinutes;
 
     public String generate(Authentication authentication) {
@@ -81,6 +81,6 @@ public class TokenProvider {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
     public static final String TOKEN_TYPE = "JWT";
-    public static final String TOKEN_ISSUER = "lib-api";
+    public static final String TOKEN_ISSUER = "IdentityProvider";
     public static final String TOKEN_AUDIENCE = "lib-app";
 }

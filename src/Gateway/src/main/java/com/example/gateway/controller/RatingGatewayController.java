@@ -1,15 +1,14 @@
 package com.example.gateway.controller;
 
-import com.example.IdentityProvider.CurrentUserToken;
-import com.example.IdentityProvider.security.TokenProvider;
+//import com.example.IdentityProvider.CurrentUserToken;
+//import com.example.IdentityProvider.security.TokenProvider;
 import com.example.request1.requests.UnavalableAnswer;
-import io.jsonwebtoken.Jwts;
+//import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -42,32 +41,33 @@ public class RatingGatewayController {
 
     public static final String ratingUrl = "http://localhost:8050/api/v1/rating";
 
-    @GetMapping
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getUserRating() {//@RequestHeader("X-User-Name") String username
-        String username = Jwts.parser()
-                .setSigningKey("v9y$B&E)H@MbQeThWmZq4t7w!z%C*F-JaNdRfUjXn2r5u8x/A?D(G+KbPeShVkYp")
-                .parseClaimsJws(CurrentUserToken.token)
-                .getBody().getSubject();
-        RestTemplate restTemplate = new RestTemplate();
-        String url = ratingUrl + "?username=" + username;
-        HashMap<String, Integer> raiting = new HashMap<>();
-        Integer result;
-        try {
-            if(countErr >= maxCountErr){
-                scheduler.schedule(healthCheck, new Date(System.currentTimeMillis() + 10000L));
-                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Rating Service unavailable"));
-            } else {
-                result = restTemplate.getForObject(url, Integer.class);
-                raiting.put("stars", result);
-            }
-        } catch (Exception exception) {
-            countErr = countErr + 1;
-            log.error(exception.getMessage(), exception);
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Rating Service unavailable"));
-        }
-        return ResponseEntity.ok(raiting);
-    }
+//    @GetMapping
+//    //@PreAuthorize("isAuthenticated()")
+//    public ResponseEntity<?> getUserRating() {//@RequestHeader("X-User-Name") String username
+//        String username = Jwts.parser()
+//                .setSigningKey("v9y$B&E)H@MbQeThWmZq4t7w!z%C*F-JaNdRfUjXn2r5u8x/A?D(G+KbPeShVkYp")
+//                .parseClaimsJws(CurrentUserToken.token)
+//                .getBody().getSubject();
+//
+//        RestTemplate restTemplate = new RestTemplate();
+//        String url = ratingUrl + "?username=" + username;
+//        HashMap<String, Integer> raiting = new HashMap<>();
+//        Integer result;
+//        try {
+//            if(countErr >= maxCountErr){
+//                scheduler.schedule(healthCheck, new Date(System.currentTimeMillis() + 10000L));
+//                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Rating Service unavailable"));
+//            } else {
+//                result = restTemplate.getForObject(url, Integer.class);
+//                raiting.put("stars", result);
+//            }
+//        } catch (Exception exception) {
+//            countErr = countErr + 1;
+//            log.error(exception.getMessage(), exception);
+//            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Rating Service unavailable"));
+//        }
+//        return ResponseEntity.ok(raiting);
+//    }
 
     @PostMapping("/decrease")
     //@PreAuthorize("isAuthenticated()")

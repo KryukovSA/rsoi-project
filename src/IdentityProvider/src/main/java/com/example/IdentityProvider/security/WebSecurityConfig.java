@@ -36,16 +36,16 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers(HttpMethod.GET, "/api/v1/statistics/getstats").hasAnyAuthority(ADMIN)
-                        .requestMatchers("/api/v1/createUser").hasAnyAuthority(ADMIN)
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/public/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/statistics/getstats").hasRole(ADMIN)
+                        .requestMatchers("/api/v1/createUser").hasRole(ADMIN)
+                        .requestMatchers("/login").permitAll()//по сути не пригодился
+                        .requestMatchers("/api/v1/auth/**").permitAll()//попробовать тут сделать для админи и посмотреть что будет
+                        .requestMatchers("api/v1/**").permitAll()//по сути не пригодился
                         .requestMatchers("/", "/error", "/csrf", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)) //.STATELESS
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();

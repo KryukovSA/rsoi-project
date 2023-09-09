@@ -27,9 +27,9 @@ import java.util.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/reservations")
 public class ReservationServiceController {
-    private static Integer maxCountErr = 8;
+    private static Integer maxCountErr = 1;//8
     private final TaskScheduler scheduler;
-    private Integer countErr = 0;
+    private Integer countErr = 3;//0
     private final Runnable healthCheck =
             new Runnable() {
                 @Override
