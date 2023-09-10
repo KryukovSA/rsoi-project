@@ -1,6 +1,7 @@
 package com.example.IdentityProvider.service;
 
 import com.example.IdentityProvider.model.MyUser;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;

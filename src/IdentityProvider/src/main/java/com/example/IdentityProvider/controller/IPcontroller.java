@@ -20,6 +20,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:8080", maxAge = 3600)
 @RestController
 @RequestMapping("/api/v1")
 @AllArgsConstructor
@@ -110,26 +111,6 @@ public class IPcontroller {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @GetMapping("/authorize")
     public String authorize() {
         // Authorization code generation logic
@@ -142,10 +123,4 @@ public class IPcontroller {
 //        String jwtToken = generateJwtToken(code);
 //        return jwtToken;
 //    }
-
-    @PostMapping(value = "/newUser")
-    public String createUser(@RequestBody MyUser user){
-        //code
-        return "successfully create";
-    }
 }
