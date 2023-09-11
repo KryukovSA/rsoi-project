@@ -21,53 +21,53 @@ import java.util.HashMap;
 @Slf4j
 @RequestMapping("/api/v1/rating")
 public class RatingGatewayController {
-    private static Integer maxCountErr = 8;
-    private final TaskScheduler scheduler;
-    private Integer countErr = 0;
-
-    private final Runnable healthCheck =
-            new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        RestTemplate restTemplate = new RestTemplate();
-                        restTemplate.getForEntity("http://localhost:8050/manage/health", ResponseEntity.class);
-                        countErr = 0;
-                    } catch (Exception e) {
-                        scheduler.schedule(this, new Date(System.currentTimeMillis() + 10000L));
-                    }
-                }
-            };
+//    private static Integer maxCountErr = 8;
+//    private final TaskScheduler scheduler;
+//    private Integer countErr = 0;
+//
+//    private final Runnable healthCheck =
+//            new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        RestTemplate restTemplate = new RestTemplate();
+//                        restTemplate.getForEntity("http://localhost:8050/manage/health", ResponseEntity.class);
+//                        countErr = 0;
+//                    } catch (Exception e) {
+//                        scheduler.schedule(this, new Date(System.currentTimeMillis() + 10000L));
+//                    }
+//                }
+//            };
 
     public static final String ratingUrl = "http://localhost:8050/api/v1/rating";
 
-//    @GetMapping
-//    //@PreAuthorize("isAuthenticated()")
-//    public ResponseEntity<?> getUserRating() {//@RequestHeader("X-User-Name") String username
+    @GetMapping
+    //@PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getUserRating(@RequestHeader("X-User-Name") String username) {//@RequestHeader("X-User-Name") String username
 //        String username = Jwts.parser()
 //                .setSigningKey("v9y$B&E)H@MbQeThWmZq4t7w!z%C*F-JaNdRfUjXn2r5u8x/A?D(G+KbPeShVkYp")
 //                .parseClaimsJws(CurrentUserToken.token)
 //                .getBody().getSubject();
-//
-//        RestTemplate restTemplate = new RestTemplate();
-//        String url = ratingUrl + "?username=" + username;
-//        HashMap<String, Integer> raiting = new HashMap<>();
-//        Integer result;
+
+        RestTemplate restTemplate = new RestTemplate();
+        String url = ratingUrl + "?username=" + username;
+        HashMap<String, Integer> raiting = new HashMap<>();
+        Integer result;
 //        try {
 //            if(countErr >= maxCountErr){
 //                scheduler.schedule(healthCheck, new Date(System.currentTimeMillis() + 10000L));
 //                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Rating Service unavailable"));
 //            } else {
-//                result = restTemplate.getForObject(url, Integer.class);
-//                raiting.put("stars", result);
+                result = restTemplate.getForObject(url, Integer.class);
+                raiting.put("stars", result);
 //            }
 //        } catch (Exception exception) {
 //            countErr = countErr + 1;
 //            log.error(exception.getMessage(), exception);
 //            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Rating Service unavailable"));
 //        }
-//        return ResponseEntity.ok(raiting);
-//    }
+        return ResponseEntity.ok(raiting);
+    }
 
     @PostMapping("/decrease")
     //@PreAuthorize("isAuthenticated()")

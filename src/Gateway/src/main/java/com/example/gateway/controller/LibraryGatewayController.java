@@ -20,24 +20,24 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/libraries")
 public class LibraryGatewayController {
-    private static Integer maxCountErr = 8;
-    private final TaskScheduler scheduler;
-    private Integer countErr = 0;
-
-    //private final TokenProvider tokenProvider;
-    private final Runnable healthCheck =
-            new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        RestTemplate restTemplate = new RestTemplate();
-                        restTemplate.getForEntity("http://localhost:8060/manage/health", ResponseEntity.class);
-                        countErr = 0;
-                    } catch (Exception e) {
-                        scheduler.schedule(this, new Date(System.currentTimeMillis() + 10000L));
-                    }
-                }
-            };
+//    private static Integer maxCountErr = 8;
+//    private final TaskScheduler scheduler;
+//    private Integer countErr = 0;
+//
+//    //private final TokenProvider tokenProvider;
+//    private final Runnable healthCheck =
+//            new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        RestTemplate restTemplate = new RestTemplate();
+//                        restTemplate.getForEntity("http://localhost:8060/manage/health", ResponseEntity.class);
+//                        countErr = 0;
+//                    } catch (Exception e) {
+//                        scheduler.schedule(this, new Date(System.currentTimeMillis() + 10000L));
+//                    }
+//                }
+//            };
     public static final String libraryUrl = "http://localhost:8060/api/v1/libraries";
 
 
@@ -49,23 +49,23 @@ public class LibraryGatewayController {
         List<Library> result = null;
                 restTemplate.getForObject(url, List.class);
         HashMap<String, Object> output = new HashMap<>();
-        try {
-            if(countErr >= maxCountErr){
-                scheduler.schedule(healthCheck, new Date(System.currentTimeMillis() + 10000L));
-                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Library Service unavailable"));
-            } else {
+//        try {
+//            if(countErr >= maxCountErr){
+//                scheduler.schedule(healthCheck, new Date(System.currentTimeMillis() + 10000L));
+//                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Library Service unavailable"));
+//            } else {
                 result = restTemplate.getForObject(url, List.class);
                 output.put("page", 1);
                 output.put("pageSize", 1);
                 output.put("totalElements", result.size());
                 output.put("items", result);
-                if(result != null)
-                    countErr = 0;
-            }
-        } catch (Exception exception){
-            countErr = countErr + 1;
-            ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Library Service unavailable"));
-        }
+//                if(result != null)
+//                    countErr = 0;
+//            }
+//        } catch (Exception exception){
+//            countErr = countErr + 1;
+//            ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Library Service unavailable"));
+//        }
         return ResponseEntity.ok(output);
     }
 
@@ -77,23 +77,23 @@ public class LibraryGatewayController {
         RestTemplate restTemplate = new RestTemplate();
         List<Books> result = null;
         HashMap<String, Object> output = new HashMap<>();
-        try {
-            if(countErr >= maxCountErr){
-                scheduler.schedule(healthCheck, new Date(System.currentTimeMillis() + 10000L));
-                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Library Service unavailable"));
-            } else {
+//        try {
+//            if(countErr >= maxCountErr){
+//                scheduler.schedule(healthCheck, new Date(System.currentTimeMillis() + 10000L));
+//                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Library Service unavailable"));
+//            } else {
                 result = restTemplate.getForObject(url, List.class);
                 output.put("page", 1);
                 output.put("pageSize", 1);
                 output.put("totalElements", result.size());
                 output.put("items", result);
-                if(result != null)
-                    countErr = 0;
-            }
-        } catch (Exception exception){
-            countErr = countErr + 1;
-            ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Library Service unavailable"));
-        }
+//                if(result != null)
+//                    countErr = 0;
+//            }
+//        } catch (Exception exception){
+//            countErr = countErr + 1;
+//            ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Library Service unavailable"));
+//        }
 
 
         return ResponseEntity.ok(output);

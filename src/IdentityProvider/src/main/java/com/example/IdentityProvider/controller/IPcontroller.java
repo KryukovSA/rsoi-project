@@ -1,6 +1,6 @@
 package com.example.IdentityProvider.controller;
 
-import com.example.IdentityProvider.CurrentUserToken;
+import com.example.IdentityProvider.Usernames;
 import com.example.IdentityProvider.controller.dto.AuthResponse;
 import com.example.IdentityProvider.controller.dto.LoginRequest;
 import com.example.IdentityProvider.controller.dto.SignUpRequest;
@@ -11,7 +11,11 @@ import com.example.IdentityProvider.security.WebSecurityConfig;
 import com.example.IdentityProvider.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,10 +24,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+
+@Slf4j
 @CrossOrigin(origins = "http://localhost:8080", maxAge = 3600)
 @RestController
 @RequestMapping("/api/v1")
 @AllArgsConstructor
+@FieldDefaults(makeFinal = false)
 public class IPcontroller {
 
     private final UserService userService;
@@ -31,10 +38,10 @@ public class IPcontroller {
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
 
+    private final Usernames usernames;
     @PostMapping("/auth/authenticate")
     public AuthResponse login(@Valid @RequestBody LoginRequest loginRequest) {
         String token = authenticateAndGetToken(loginRequest.getUsername(), loginRequest.getPassword());
-        CurrentUserToken.token = token;
         return new AuthResponse(token);
     }
 
@@ -51,7 +58,6 @@ public class IPcontroller {
         userService.saveUser(mapSignUpRequestToUser(signUpRequest));
 
         String token = authenticateAndGetToken(signUpRequest.getUsername(), signUpRequest.getPassword());
-        CurrentUserToken.token = token;
         return new AuthResponse(token);
     }
 
@@ -69,26 +75,19 @@ public class IPcontroller {
         return user;
     }
 
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @PostMapping("/createUser")
-//    public String createUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-//        if (userService.hasUserWithUsername(signUpRequest.getUsername())) {
-//            throw new DuplicatedUserInfoException(String.format("Username %s already been used", signUpRequest.getUsername()));
-//        }
-//        if (userService.hasUserWithEmail(signUpRequest.getEmail())) {
-//            throw new DuplicatedUserInfoException(String.format("Email %s already been used", signUpRequest.getEmail()));
-//        }
-//
-//        userService.saveUser(mapSignUpRequestToUser(signUpRequest));
-//
-//        //String token = authenticateAndGetToken(signUpRequest.getUsername(), signUpRequest.getPassword());
-//        return "user successfully created";
-//    }
-
-
+    private final KafkaTemplate<String, String> kafkaTemplate;
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/createUser")
     public String createUser(@Valid @RequestBody SignUpRequest signUpRequest, Authentication authentication) {
+        //отправляется статисткиа
+//        log.info("Send order to kafka");
+//        UserSentEvent userSentEvent = new UserSentEvent();
+//        userSentEvent.setRole("USER");
+//        userSentEvent.setUsername(signUpRequest.getUsername());
+//        producer.sendUserEvent(userSentEvent);
+
+        kafkaTemplate.send("my-topic", "attempt to create a user with the name = " + signUpRequest.getUsername());
+
         System.out.println(String.format("Это сообщение об ошибке. ваша роль: %s", authentication.getAuthorities().iterator().next().getAuthority()));
         if (!authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))) {
             // Если текущий пользователь не администратор, возвращаем ошибку доступа
@@ -110,17 +109,24 @@ public class IPcontroller {
         return "User successfully created";
     }
 
-
-    @GetMapping("/authorize")
-    public String authorize() {
-        // Authorization code generation logic
-        return "ok";
+    @KafkaListener(topics = "my-topic", groupId = "my-group")
+    public void receiveStatistics(String statistics) {
+        // Обработка полученной статистики
+        //System.out.println("Received statistics: " + statistics);
+        String currentStatistics = usernames.getUser_name();
+        if (usernames.getUser_name() != null)
+            usernames.setUser_name(currentStatistics + "\n" + statistics);
+        else
+            usernames.setUser_name(statistics);
+        // Здесь вы можете вернуть статистику клиенту в нужном формате (например, как HTTP-ответ)
     }
 
-//    @GetMapping("/callback")
-//    public String callback(@RequestParam("code") String code) {
-//        // Validate the authorization code and generate the JWT token
-//        String jwtToken = generateJwtToken(code);
-//        return jwtToken;
-//    }
+    @GetMapping ("/statistics/getstats")
+    @ResponseStatus(HttpStatus.OK)
+    public String sentEvent() {
+        log.info("Send info to kafka");
+        // Вернуть ответ клиенту
+        return usernames.getUser_name();
+    }
+
 }

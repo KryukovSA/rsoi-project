@@ -1,6 +1,7 @@
 package com.example.IdentityProvider.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,8 @@ import javax.servlet.Filter;
 
 @RequiredArgsConstructor
 @Configuration
+@ComponentScan(basePackages = "com.example.IdentityProvider.repository")
+@ComponentScan(basePackages = "com.example.IdentityProvider.service")
 @EnableWebSecurity
 public class WebSecurityConfig {
 

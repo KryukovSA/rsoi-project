@@ -39,7 +39,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
-
 # TODO добавить сервисы
 
 volumes:

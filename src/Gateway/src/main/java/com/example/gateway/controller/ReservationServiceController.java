@@ -27,22 +27,22 @@ import java.util.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/reservations")
 public class ReservationServiceController {
-    private static Integer maxCountErr = 1;//8
-    private final TaskScheduler scheduler;
-    private Integer countErr = 3;//0
-    private final Runnable healthCheck =
-            new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        RestTemplate restTemplate = new RestTemplate();
-                        restTemplate.getForEntity("http://localhost:8070/manage/health", ResponseEntity.class);
-                        countErr = 0;
-                    } catch (Exception e) {
-                        scheduler.schedule(this, new Date(System.currentTimeMillis() + 10000L));
-                    }
-                }
-            };
+//    private static Integer maxCountErr = 1;//8
+//    private final TaskScheduler scheduler;
+//    private Integer countErr = 0;//0
+//    private final Runnable healthCheck =
+//            new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        RestTemplate restTemplate = new RestTemplate();
+//                        restTemplate.getForEntity("http://localhost:8070/manage/health", ResponseEntity.class);
+//                        countErr = 0;
+//                    } catch (Exception e) {
+//                        scheduler.schedule(this, new Date(System.currentTimeMillis() + 10000L));
+//                    }
+//                }
+//            };
     public static final String reservation_url = "http://localhost:8070/api/v1/reservations";
     Reservation mainReservation;
     @PostMapping
@@ -52,50 +52,50 @@ public class ReservationServiceController {
         HttpEntity<TakeBook> request = new HttpEntity<>(takeBookRequest, null);
         Reservation result = null;
         HashMap<String, Object> output = new HashMap<>();
-        try {
-            if(countErr >= maxCountErr){
-                scheduler.schedule(healthCheck, new Date(System.currentTimeMillis() + 10000L));
-                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Reservation Service unavailable"));
-            } else {
-            result = restTemplate.postForObject(reservation_url + "?username=" + username, request, Reservation.class);
-            mainReservation = result;
+//        try {
+//            if(countErr >= maxCountErr){
+//                scheduler.schedule(healthCheck, new Date(System.currentTimeMillis() + 10000L));
+//                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Reservation Service unavailable"));
+//            } else {
+        result = restTemplate.postForObject(reservation_url + "?username=" + username, request, Reservation.class);
+        mainReservation = result;
 
 
-            Books book = restTemplate.getForObject("http://localhost:8060/api/v1/libraries/getBook" + "?libraryUid=" + result.getLibraryUid() + "&bookUid=" + result.getBookUid(), Books.class);
-            HashMap<String, Object> book1 = new HashMap<>();
-            book1.put("bookUid", book.getBookUid());
-            book1.put("name", book.getName());
-            book1.put("author", book.getAuthor());
-            book1.put("genre", book.getGenre());
+        Books book = restTemplate.getForObject("http://localhost:8060/api/v1/libraries/getBook" + "?libraryUid=" + result.getLibraryUid() + "&bookUid=" + result.getBookUid(), Books.class);
+        HashMap<String, Object> book1 = new HashMap<>();
+        book1.put("bookUid", book.getBookUid());
+        book1.put("name", book.getName());
+        book1.put("author", book.getAuthor());
+        book1.put("genre", book.getGenre());
 
-            Library lib = restTemplate.getForObject("http://localhost:8060/api/v1/libraries/getLib" + "?libraryUid=" + result.getLibraryUid(), Library.class);
-            HashMap<String, Object> lib1 = new HashMap<>();
-            lib1.put("libraryUid", lib.getLibraryUid());
-            lib1.put("name", lib.getName());
-            lib1.put("address", lib.getAddress());
-            lib1.put("city", lib.getCity());
+        Library lib = restTemplate.getForObject("http://localhost:8060/api/v1/libraries/getLib" + "?libraryUid=" + result.getLibraryUid(), Library.class);
+        HashMap<String, Object> lib1 = new HashMap<>();
+        lib1.put("libraryUid", lib.getLibraryUid());
+        lib1.put("name", lib.getName());
+        lib1.put("address", lib.getAddress());
+        lib1.put("city", lib.getCity());
 
-            Integer rating = restTemplate.getForObject("http://localhost:8050/api/v1/rating" + "?username=" + result.getUsername(), Integer.class);
-            HashMap<String, Integer> raiting = new HashMap<>();
-            raiting.put("stars", rating);
+        Integer rating = restTemplate.getForObject("http://localhost:8050/api/v1/rating" + "?username=" + result.getUsername(), Integer.class);
+        HashMap<String, Integer> raiting = new HashMap<>();
+        raiting.put("stars", rating);
 
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 
-            output.put("reservationUid", result.getReservationUid());
-            output.put("status", result.getStatus());
-            output.put("startDate", df.format(result.getStartDate()));
-            output.put("tillDate", df.format(result.getTillDate()));
-            output.put("book", book1);
-            output.put("library", lib1);
-            output.put("rating", raiting);
-            if (result != null) countErr= 0;
-            }
-        } catch (Exception exception) {
-            countErr = countErr + 1;
-            log.error(exception.getMessage(), exception);
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Reservation Service unavailable"));
-        }
+        output.put("reservationUid", result.getReservationUid());
+        output.put("status", result.getStatus());
+        output.put("startDate", df.format(result.getStartDate()));
+        output.put("tillDate", df.format(result.getTillDate()));
+        output.put("book", book1);
+        output.put("library", lib1);
+        output.put("rating", raiting);
+//            if (result != null) countErr= 0;
+//            }
+//        } catch (Exception exception) {
+//            countErr = countErr + 1;
+//            log.error(exception.getMessage(), exception);
+//            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Reservation Service unavailable"));
+//        }
         return ResponseEntity.ok(output);
     }
 
@@ -108,12 +108,13 @@ public class ReservationServiceController {
 
         List<HashMap<String, Object>> answer = new ArrayList<>();
 
-        try {
-            if(countErr >= maxCountErr){
-                scheduler.schedule(healthCheck, new Date(System.currentTimeMillis() + 10000L));
-                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Reservation Service unavailable"));
-            } else {
+//        try {
+//            if(countErr >= maxCountErr){
+//                scheduler.schedule(healthCheck, new Date(System.currentTimeMillis() + 10000L));
+//                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Reservation Service unavailable"));
+//            } else {
             result = restTemplate.getForObject(url, List.class);
+
             Books book = restTemplate.getForObject("http://localhost:8060/api/v1/libraries/getBook" + "?libraryUid=" + mainReservation.getLibraryUid() + "&bookUid=" + mainReservation.getBookUid(), Books.class);//result.get(0)
             HashMap<String, Object> book1 = new HashMap<>();
             book1.put("bookUid", book.getBookUid());
@@ -136,13 +137,13 @@ public class ReservationServiceController {
             output.put("book", book1);
             output.put("library", lib1);
             answer.add(output);
-            if (result != null) countErr= 0;
-            }
-        } catch (Exception exception) {
-            countErr = countErr + 1;
-            log.error(exception.getMessage(), exception);
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Reservation Service unavailable"));
-        }
+//            if (result != null) countErr= 0;
+//            }
+//        } catch (Exception exception) {
+//            countErr = countErr + 1;
+//            log.error(exception.getMessage(), exception);
+//            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new UnavalableAnswer("Reservation Service unavailable"));
+//        }
         return ResponseEntity.ok(answer);
     }
 
@@ -157,20 +158,23 @@ public class ReservationServiceController {
         HttpEntity<ReturnBook> request = new HttpEntity<>(returnBookRequest, null);
         try {
         return restTemplate.postForEntity(reservation_url + "/" + reservationUid + "/return" + "?username=" + username, request, ReturnBook.class);
-        } catch (Exception exception) {
-            scheduler.schedule(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                restTemplate.postForEntity(reservation_url + "/" + reservationUid + "/return" + "?username=" + username, request, ReturnBook.class);
-                            } catch (Exception exception1) {
-                                scheduler.schedule(this, new Date(System.currentTimeMillis() + 10000L));
-                            }
-                        }
-                    }, new Date());
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (HttpStatusCodeException e) {
+            return ResponseEntity.badRequest().body(e.getResponseBodyAsString());
         }
+        //        } catch (Exception exception) {
+//            scheduler.schedule(
+//                    new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            try {
+//                                restTemplate.postForEntity(reservation_url + "/" + reservationUid + "/return" + "?username=" + username, request, ReturnBook.class);
+//                            } catch (Exception exception1) {
+//                                scheduler.schedule(this, new Date(System.currentTimeMillis() + 10000L));
+//                            }
+//                        }
+//                    }, new Date());
+//            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+//        }
     }
 
 }
